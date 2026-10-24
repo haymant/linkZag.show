@@ -175,7 +175,5 @@ commands passed. Evidence is a command plus its observed result, not a claim.
   integration tests, build, E2E/golden tests, and failure-artifact upload.
 - Git commit `6590b28984aed65fa4f05c0e055f8c78914a4216` contains 125 files. Remote
   `origin` is `https://github.com/haymant/linkZag.show.git`.
-- Push is **blocked**: `git push -u origin main` returns `fatal: could not read Username for
-  'https://github.com': terminal prompts disabled`. This machine has no GitHub credential in
-  the osxkeychain, no SSH identity, no `gh` CLI, and no token in the environment. Authenticate
-  Git/GitHub, then run `git push -u origin main` from the repository root.
+- `git push -u origin main` succeeded; `git ls-remote --heads origin` reports
+  `04e2f5a6a3f95f788be33ffe2bf92470a5c9ce92 refs/heads/main`, and `main` tracks `origin/main`.
