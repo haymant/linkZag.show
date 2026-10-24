@@ -59,6 +59,40 @@ function scaleDataValue(value: unknown, progress: number): unknown {
  * Scale numeric series values from zero to their target. The chart keeps its
  * layout and axis scale, so growth reads as focus instead of a rescaling jitter.
  */
+
+function numericExtent(series: UnknownRecord[]): { min: number; max: number } | null {
+  let min = Number.POSITIVE_INFINITY
+  let max = Number.NEGATIVE_INFINITY
+  const visit = (value: unknown): void => {
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      min = Math.min(min, value)
+      max = Math.max(max, value)
+      return
+    }
+    if (isRecord(value) && typeof value.value === 'number' && Number.isFinite(value.value)) {
+      min = Math.min(min, value.value)
+      max = Math.max(max, value.value)
+      return
+    }
+    if (Array.isArray(value) && value.length >= 3 && typeof value[2] === 'number') {
+      visit(value[2])
+    }
+  }
+  for (const entry of series) {
+    if (Array.isArray(entry.data)) {
+      for (const value of entry.data) visit(value)
+    }
+  }
+  return Number.isFinite(min) && Number.isFinite(max) ? { min, max } : null
+}
+
+function pinValueAxis(axis: unknown, extent: { min: number; max: number }): unknown {
+  if (!isRecord(axis)) return axis
+  if (axis.type !== undefined && axis.type !== 'value') return axis
+  if (axis.max !== undefined || axis.min !== undefined) return axis
+  return { ...axis, min: extent.min >= 0 ? 0 : extent.min, max: extent.max }
+}
+
 export function scaleChartSeries(option: EChartsOption, progress: number): EChartsOption {
   const source = option as UnknownRecord
   const series = source.series
@@ -82,5 +116,14 @@ export function scaleChartSeries(option: EChartsOption, progress: number): EChar
     return entry
   })
 
-  return { series: scaled } as EChartsOption
+  const extent = numericExtent(series.filter(isRecord))
+  const axes = source.yAxis
+  const pinnedYAxis = extent
+    ? Array.isArray(axes)
+      ? axes.map((axis) => pinValueAxis(axis, extent))
+      : axes !== undefined
+        ? pinValueAxis(axes, extent)
+        : { type: 'value', min: extent.min >= 0 ? 0 : extent.min, max: extent.max }
+    : axes
+  return { series: scaled, ...(pinnedYAxis !== undefined ? { yAxis: pinnedYAxis } : {}) } as EChartsOption
 }
