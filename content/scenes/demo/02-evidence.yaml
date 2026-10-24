@@ -1,0 +1,45 @@
+id: demo-evidence
+duration: 8
+width: 1920
+height: 1080
+theme: dark
+background: theme
+eyebrow: DEMO · 02 / EVIDENCE
+title: Verified, not vibes
+subtitle: Acceptance checks turn a plausible answer into a shippable change.
+
+items:
+  - type: echarts
+    x: 96
+    y: 380
+    width: 1010
+    height: 580
+    file: ../../assets/charts/bar.json
+    enter:
+      type: fade-up
+      delay: 0.35
+      duration: 0.8
+    chartAnimation:
+      mode: values
+      delay: 0.65
+      duration: 1.3
+      easing: ease-out
+
+  - type: markdown
+    x: 1190
+    y: 410
+    width: 634
+    height: 440
+    content: |
+      ## What travels with the code
+
+      - The acceptance check
+      - The test run and trace
+      - The diff that explains the decision
+      - The risk that remains
+
+      A review can now start from evidence instead of a hunch.
+    enter:
+      type: fade-up
+      delay: 0.55
+      duration: 0.9

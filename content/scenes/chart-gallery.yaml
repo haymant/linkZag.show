@@ -1,0 +1,39 @@
+id: chart-gallery
+eyebrow: VISUAL SYSTEM
+title: The chart language
+subtitle: One palette, one type system, every common chart type.
+footer: ECharts · SVG renderer
+duration: 8
+width: 1920
+height: 1080
+theme: dark
+background: theme
+
+items:
+  - type: echarts
+    x: 96
+    y: 355
+    width: 850
+    height: 270
+    file: ../assets/charts/line.json
+
+  - type: echarts
+    x: 980
+    y: 355
+    width: 844
+    height: 270
+    file: ../assets/charts/bar.json
+
+  - type: echarts
+    x: 96
+    y: 655
+    width: 850
+    height: 270
+    file: ../assets/charts/pie.json
+
+  - type: echarts
+    x: 980
+    y: 655
+    width: 844
+    height: 270
+    file: ../assets/charts/scatter.json

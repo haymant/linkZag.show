@@ -1,0 +1,26 @@
+id: verified-loop
+eyebrow: IMPLEMENTATION
+title: The loop is the product
+subtitle: A coding agent is only as good as its verification loop.
+footer: Code walkthrough
+duration: 10
+width: 1920
+height: 1080
+theme: dark
+background: theme
+
+items:
+  - type: code
+    x: 96
+    y: 365
+    width: 1728
+    height: 550
+    file: ../assets/agent-loop.ts
+    language: typescript
+    startLine: 1
+    highlight: [10, 11, 12, 13]
+    showLineNumbers: true
+    enter:
+      type: fade-up
+      delay: 0.35
+      duration: 0.8

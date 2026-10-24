@@ -1,0 +1,56 @@
+{
+  "title": {
+    "text": "Where agent time goes",
+    "subtext": "A typical verified loop",
+    "left": "center",
+    "top": 0
+  },
+  "legend": {
+    "bottom": 0
+  },
+  "series": [
+    {
+      "name": "Time allocation",
+      "type": "pie",
+      "radius": [
+        "24%",
+        "46%"
+      ],
+      "center": [
+        "50%",
+        "56%"
+      ],
+      "avoidLabelOverlap": true,
+      "itemStyle": {
+        "borderWidth": 2,
+        "borderColor": "transparent"
+      },
+      "label": {
+        "formatter": "{d}%",
+        "fontSize": 11
+      },
+      "labelLine": {
+        "length": 8,
+        "length2": 6
+      },
+      "data": [
+        {
+          "value": 38,
+          "name": "Specification"
+        },
+        {
+          "value": 22,
+          "name": "Implementation"
+        },
+        {
+          "value": 28,
+          "name": "Verification"
+        },
+        {
+          "value": 12,
+          "name": "Integration"
+        }
+      ]
+    }
+  ]
+}

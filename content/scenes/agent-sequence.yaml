@@ -1,0 +1,22 @@
+id: agent-sequence
+eyebrow: AGENT PROTOCOL
+title: Evidence at every handoff
+subtitle: A verified loop is a sequence of observable commitments.
+footer: Agent protocol · sequence diagram
+duration: 9
+width: 1920
+height: 1080
+theme: dark
+background: theme
+
+items:
+  - type: mermaid
+    x: 96
+    y: 355
+    width: 1728
+    height: 570
+    file: ../assets/agent-sequence.mmd
+    enter:
+      type: draw
+      delay: 0.4
+      duration: 1.2

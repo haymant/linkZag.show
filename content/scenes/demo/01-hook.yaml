@@ -1,0 +1,42 @@
+id: demo-hook
+duration: 6
+width: 1920
+height: 1080
+theme: dark
+background: theme
+eyebrow: DEMO · 01 / THE SHIFT
+title: The bottleneck moved
+subtitle: From typing code to specifying, verifying, and integrating it.
+
+items:
+  - type: markdown
+    x: 96
+    y: 420
+    width: 880
+    height: 360
+    content: |
+      ## Three changes
+
+      - **Intent is the new code.** A testable specification beats a fast keystroke.
+      - **Evidence is the new review.** Tests, traces, and diffs become the artifact.
+      - **Loops are the new tools.** Agents that verify and repair compound.
+    enter:
+      type: fade-up
+      delay: 0.35
+      duration: 0.8
+
+  - type: markdown
+    x: 1080
+    y: 430
+    width: 744
+    height: 320
+    content: |
+      > The unit of work is no longer a file.
+      >
+      > It is a verified loop.
+
+      Ship the loop. Then ship the software.
+    enter:
+      type: fade-up
+      delay: 0.55
+      duration: 0.9

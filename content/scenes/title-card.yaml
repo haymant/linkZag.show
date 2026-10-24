@@ -1,0 +1,23 @@
+id: title-card
+eyebrow: LINKZAG.SHOW / EPISODE 01
+title: The agentic coding shift
+subtitle: Building software when the unit of work is a verified loop.
+footer: A commentary visual · 2026
+duration: 7
+width: 1920
+height: 1080
+theme: dark
+background: theme
+
+items:
+  - type: image
+    x: 96
+    y: 788
+    width: 320
+    height: 100
+    src: ../assets/linkzag-mark.svg
+    opacity: 0.92
+    enter:
+      type: fade
+      delay: 0.65
+      duration: 0.9

@@ -1,0 +1,39 @@
+{
+  "title": {
+    "text": "Quality versus throughput",
+    "subtext": "Each point is one feature",
+    "left": "center",
+    "top": 0
+  },
+  "grid": { "left": 50, "right": 26, "top": 82, "bottom": 48, "containLabel": true },
+  "xAxis": {
+    "type": "value",
+    "name": "tests per feature",
+    "nameLocation": "middle",
+    "nameGap": 28
+  },
+  "yAxis": {
+    "type": "value",
+    "name": "cycle time (h)",
+    "nameTextStyle": { "align": "right" }
+  },
+  "series": [
+    {
+      "name": "Features",
+      "type": "scatter",
+      "symbolSize": 13,
+      "data": [
+        [12, 38],
+        [18, 31],
+        [24, 25],
+        [29, 21],
+        [35, 17],
+        [41, 14],
+        [47, 12],
+        [21, 44],
+        [33, 34],
+        [52, 26]
+      ]
+    }
+  ]
+}

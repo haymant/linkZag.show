@@ -1,0 +1,40 @@
+{
+  "title": {
+    "text": "Verification latency",
+    "subtext": "Minutes to actionable evidence",
+    "left": "center",
+    "top": 0
+  },
+  "tooltip": { "trigger": "axis" },
+  "grid": { "left": 46, "right": 22, "top": 82, "bottom": 48, "containLabel": true },
+  "xAxis": {
+    "type": "category",
+    "data": ["D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "D10", "D11", "D12"]
+  },
+  "yAxis": {
+    "type": "value",
+    "name": "minutes",
+    "nameTextStyle": { "align": "right" }
+  },
+  "series": [
+    {
+      "name": "Latency",
+      "type": "candlestick",
+      "barMaxWidth": 20,
+      "data": [
+        [42, 38, 46, 30],
+        [38, 29, 41, 24],
+        [29, 26, 34, 20],
+        [26, 18, 30, 14],
+        [18, 16, 24, 11],
+        [16, 12, 21, 8],
+        [12, 9, 17, 6],
+        [9, 8, 14, 5],
+        [8, 5, 12, 4],
+        [5, 4, 9, 3],
+        [4, 3, 7, 2],
+        [3, 2, 6, 1]
+      ]
+    }
+  ]
+}

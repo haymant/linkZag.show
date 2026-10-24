@@ -1,0 +1,60 @@
+id: chart-gallery-advanced
+eyebrow: VISUAL SYSTEM
+title: Beyond the line chart
+subtitle: Dense relationships without dashboards or application chrome.
+footer: ECharts · advanced series
+duration: 9
+width: 1920
+height: 1080
+theme: dark
+background: theme
+
+items:
+  - type: echarts
+    x: 96
+    y: 355
+    width: 552
+    height: 280
+    file: ../assets/charts/heatmap.json
+
+  - type: echarts
+    x: 684
+    y: 355
+    width: 552
+    height: 280
+    file: ../assets/charts/treemap.json
+
+  - type: echarts
+    x: 1272
+    y: 355
+    width: 552
+    height: 280
+    file: ../assets/charts/sankey.json
+
+  - type: echarts
+    x: 96
+    y: 660
+    width: 552
+    height: 280
+    file: ../assets/charts/graph.json
+
+  - type: echarts
+    x: 684
+    y: 660
+    width: 552
+    height: 280
+    file: ../assets/charts/candlestick.json
+
+  - type: markdown
+    x: 1272
+    y: 660
+    width: 552
+    height: 280
+    content: |
+      ### Declarative charts
+
+      Each visual is a data object. The runtime supplies theme, typography and deterministic SVG rendering.
+
+      - No canvas flicker
+      - No chart animation timers
+      - No cloud renderer

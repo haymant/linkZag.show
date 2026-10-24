@@ -1,0 +1,25 @@
+id: the-loop-quote
+eyebrow: FIELD NOTES
+footer: The Agentic Shift · Commentary
+duration: 8
+width: 1920
+height: 1080
+theme: dark
+background: theme
+padding: 140
+
+items:
+  - type: quote
+    x: 140
+    y: 300
+    width: 1640
+    height: 560
+    text: "The best coding agents do not remove engineers. They remove the delay between intent and evidence."
+    author: LinkZag Research
+    source: Field notes on agentic software delivery
+    avatar: ../assets/avatar.svg
+    accent: "#38BDF8"
+    enter:
+      type: fade-up
+      delay: 0.35
+      duration: 0.9

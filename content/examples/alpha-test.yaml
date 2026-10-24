@@ -1,0 +1,16 @@
+id: alpha-test
+duration: 2
+width: 640
+height: 360
+variant: item
+background: transparent
+padding: 40
+
+items:
+  - type: image
+    src: ../assets/linkzag-mark.svg
+    fit: contain
+    enter:
+      type: fade
+      delay: 0
+      duration: 0.3

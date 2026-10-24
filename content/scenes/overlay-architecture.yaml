@@ -1,0 +1,21 @@
+id: overlay-architecture
+duration: 9
+width: 1600
+height: 900
+variant: item
+background: transparent
+padding: 32
+
+items:
+  - type: xyflow
+    file: ../assets/agent-architecture.json
+    layout: auto
+    direction: LR
+    grid: true
+    fitViewPadding: 0.14
+    flowAnimation:
+      delay: 0.35
+      duration: 0.55
+      stagger: 0.07
+      edgeDuration: 0.6
+      edgeStagger: 0.06

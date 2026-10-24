@@ -1,0 +1,39 @@
+id: golden
+eyebrow: GOLDEN SNAPSHOT
+title: Deterministic by design
+subtitle: Same scene. Same time. Same pixels.
+footer: Golden reference · 1280×720
+duration: 2
+width: 1280
+height: 720
+background: theme
+
+items:
+  - type: markdown
+    x: 64
+    y: 250
+    width: 560
+    height: 360
+    content: |
+      ### Scene runtime
+
+      Charts, diagrams, markdown and code render inside one exact-size React stage.
+
+      - Bundled fonts
+      - Time as the only animation input
+      - Local assets only
+    enter:
+      type: fade-up
+      delay: 0.05
+      duration: 0.5
+
+  - type: echarts
+    x: 660
+    y: 240
+    width: 556
+    height: 370
+    file: ../assets/charts/line.json
+    enter:
+      type: fade-up
+      delay: 0.15
+      duration: 0.5

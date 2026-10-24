@@ -1,0 +1,19 @@
+{
+  "nodes": [
+    { "id": "goal", "label": "User goal", "sublabel": "natural language", "kind": "input" },
+    { "id": "planner", "label": "Planner", "sublabel": "decompose + route", "kind": "accent" },
+    { "id": "retrieval", "label": "Retrieval", "sublabel": "repo + docs" },
+    { "id": "tools", "label": "Tool runtime", "sublabel": "tests · shell · browser" },
+    { "id": "critic", "label": "Critic", "sublabel": "verify + repair", "kind": "output" },
+    { "id": "memory", "label": "Memory", "sublabel": "traces + decisions", "kind": "muted" }
+  ],
+  "edges": [
+    { "source": "goal", "target": "planner", "kind": "accent" },
+    { "source": "planner", "target": "retrieval" },
+    { "source": "planner", "target": "tools" },
+    { "source": "retrieval", "target": "critic" },
+    { "source": "tools", "target": "critic", "label": "evidence" },
+    { "source": "critic", "target": "planner", "label": "retry", "kind": "dashed" },
+    { "source": "memory", "target": "planner", "kind": "dashed" }
+  ]
+}

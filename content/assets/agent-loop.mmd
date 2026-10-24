@@ -1,0 +1,7 @@
+flowchart LR
+  G([Goal]) --> P[Plan]
+  P --> A[Act]
+  A --> V{Verify}
+  V -->|pass| S([Ship])
+  V -->|fail| R[Repair]
+  R --> A

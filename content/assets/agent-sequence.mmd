@@ -1,0 +1,13 @@
+sequenceDiagram
+  autonumber
+  participant U as User
+  participant A as Agent
+  participant R as Repo
+  participant T as Tests
+  U->>A: Goal
+  A->>R: Read + plan
+  R-->>A: Context
+  A->>T: Run checks
+  T-->>A: Failures
+  A->>A: Repair
+  A-->>U: Verified patch

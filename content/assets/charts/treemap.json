@@ -1,0 +1,102 @@
+{
+  "title": {
+    "text": "Engineering effort map",
+    "subtext": "Relative share of the loop",
+    "left": "center",
+    "top": 0
+  },
+  "series": [
+    {
+      "type": "treemap",
+      "top": 66,
+      "bottom": 12,
+      "left": 14,
+      "right": 14,
+      "roam": false,
+      "nodeClick": false,
+      "breadcrumb": {
+        "show": false
+      },
+      "label": {
+        "show": true,
+        "formatter": "{b}\n{c}%",
+        "color": "#FFFFFF",
+        "fontSize": 15
+      },
+      "upperLabel": {
+        "show": false
+      },
+      "levels": [
+        {
+          "itemStyle": {
+            "borderColor": "transparent",
+            "borderWidth": 3,
+            "gapWidth": 3
+          }
+        }
+      ],
+      "data": [
+        {
+          "name": "Verify",
+          "value": 34,
+          "children": [
+            {
+              "name": "Tests",
+              "value": 18
+            },
+            {
+              "name": "Trace",
+              "value": 9
+            },
+            {
+              "name": "Review",
+              "value": 7
+            }
+          ]
+        },
+        {
+          "name": "Specify",
+          "value": 28,
+          "children": [
+            {
+              "name": "Intent",
+              "value": 16
+            },
+            {
+              "name": "Limits",
+              "value": 12
+            }
+          ]
+        },
+        {
+          "name": "Implement",
+          "value": 24,
+          "children": [
+            {
+              "name": "Generate",
+              "value": 14
+            },
+            {
+              "name": "Refactor",
+              "value": 10
+            }
+          ]
+        },
+        {
+          "name": "Integrate",
+          "value": 14,
+          "children": [
+            {
+              "name": "Deploy",
+              "value": 8
+            },
+            {
+              "name": "Check",
+              "value": 6
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

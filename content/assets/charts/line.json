@@ -1,0 +1,43 @@
+{
+  "title": {
+    "text": "Cycle time per shipped feature",
+    "subtext": "Indexed hours · illustrative project",
+    "left": "center",
+    "top": 0
+  },
+  "tooltip": { "trigger": "axis" },
+  "legend": {
+    "bottom": 2,
+    "data": ["Human-only", "Agent-assisted"]
+  },
+  "grid": { "left": 46, "right": 26, "top": 84, "bottom": 58, "containLabel": true },
+  "xAxis": {
+    "type": "category",
+    "boundaryGap": false,
+    "data": ["W1", "W2", "W3", "W4", "W5", "W6", "W7", "W8"]
+  },
+  "yAxis": {
+    "type": "value",
+    "name": "hours",
+    "nameTextStyle": { "align": "right" }
+  },
+  "series": [
+    {
+      "name": "Human-only",
+      "type": "line",
+      "smooth": true,
+      "symbol": "none",
+      "data": [100, 99, 98, 97, 96, 95, 94, 93],
+      "lineStyle": { "width": 2, "type": "dashed" }
+    },
+    {
+      "name": "Agent-assisted",
+      "type": "line",
+      "smooth": true,
+      "symbol": "circle",
+      "symbolSize": 6,
+      "data": [100, 78, 60, 47, 38, 32, 28, 25],
+      "areaStyle": { "opacity": 0.16 }
+    }
+  ]
+}

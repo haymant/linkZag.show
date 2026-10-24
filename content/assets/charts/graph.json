@@ -1,0 +1,42 @@
+{
+  "title": {
+    "text": "Agent topology",
+    "subtext": "Who hands evidence to whom",
+    "left": "center",
+    "top": 0
+  },
+  "tooltip": { "show": false },
+  "series": [
+    {
+      "type": "graph",
+      "layout": "circular",
+      "top": 78,
+      "bottom": 0,
+      "circular": { "rotateLabel": false },
+      "symbolSize": 52,
+      "roam": false,
+      "label": { "show": true, "position": "inside", "fontSize": 9, "fontWeight": 600, "color": "#FFFFFF" },
+      "edgeSymbol": ["none", "arrow"],
+      "edgeSymbolSize": 8,
+      "force": { "repulsion": 260, "edgeLength": 110, "gravity": 0.08 },
+      "data": [
+        { "name": "Goal" },
+        { "name": "Planner" },
+        { "name": "Retrieval" },
+        { "name": "Tools" },
+        { "name": "Critic" },
+        { "name": "Ship" }
+      ],
+      "links": [
+        { "source": "Goal", "target": "Planner" },
+        { "source": "Planner", "target": "Retrieval" },
+        { "source": "Planner", "target": "Tools" },
+        { "source": "Retrieval", "target": "Critic" },
+        { "source": "Tools", "target": "Critic" },
+        { "source": "Critic", "target": "Planner" },
+        { "source": "Critic", "target": "Ship" }
+      ],
+      "lineStyle": { "curveness": 0.18 }
+    }
+  ]
+}

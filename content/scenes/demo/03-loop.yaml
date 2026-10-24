@@ -1,0 +1,42 @@
+id: demo-loop
+duration: 8
+width: 1920
+height: 1080
+theme: light
+background: theme
+eyebrow: DEMO · 03 / THE LOOP
+title: One loop, four moves
+subtitle: Plan, act, verify, repair. The diagram is the process.
+
+items:
+  - type: mermaid
+    x: 96
+    y: 390
+    width: 1120
+    height: 470
+    file: ../../assets/agent-loop.mmd
+    enter:
+      type: draw
+      delay: 0.45
+      duration: 1.1
+
+  - type: markdown
+    x: 1280
+    y: 410
+    width: 544
+    height: 430
+    content: |
+      ### The loop is the artifact
+
+      Every pass leaves a trace:
+
+      1. Intent
+      2. Action
+      3. Evidence
+      4. Repair
+
+      The next pass starts from what the last one learned.
+    enter:
+      type: fade-up
+      delay: 0.65
+      duration: 0.9

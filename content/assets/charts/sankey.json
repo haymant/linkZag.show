@@ -1,0 +1,92 @@
+{
+  "title": {
+    "text": "From intent to evidence",
+    "subtext": "Value flowing through the delivery system",
+    "left": "center",
+    "top": 0
+  },
+  "series": [
+    {
+      "type": "sankey",
+      "left": 18,
+      "right": 66,
+      "top": 76,
+      "bottom": 14,
+      "nodeWidth": 13,
+      "nodeGap": 12,
+      "layoutIterations": 32,
+      "emphasis": {
+        "focus": "adjacency"
+      },
+      "lineStyle": {
+        "color": "gradient",
+        "opacity": 0.32
+      },
+      "label": {
+        "fontSize": 12
+      },
+      "data": [
+        {
+          "name": "Intent"
+        },
+        {
+          "name": "Plan"
+        },
+        {
+          "name": "Agent"
+        },
+        {
+          "name": "Tests"
+        },
+        {
+          "name": "Verified"
+        },
+        {
+          "name": "Rework"
+        }
+      ],
+      "links": [
+        {
+          "source": "Intent",
+          "target": "Plan",
+          "value": 40
+        },
+        {
+          "source": "Intent",
+          "target": "Rework",
+          "value": 8
+        },
+        {
+          "source": "Plan",
+          "target": "Agent",
+          "value": 40
+        },
+        {
+          "source": "Agent",
+          "target": "Tests",
+          "value": 34
+        },
+        {
+          "source": "Agent",
+          "target": "Rework",
+          "value": 6
+        },
+        {
+          "source": "Tests",
+          "target": "Verified",
+          "value": 26
+        },
+        {
+          "source": "Tests",
+          "target": "Rework",
+          "value": 8
+        },
+        {
+          "source": "Rework",
+          "target": "Verified",
+          "value": 22
+        }
+      ]
+    }
+  ]
+}

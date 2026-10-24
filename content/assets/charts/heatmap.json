@@ -1,0 +1,64 @@
+{
+  "title": {
+    "text": "Review load by hour",
+    "subtext": "Pull requests awaiting evidence",
+    "left": "center",
+    "top": 0
+  },
+  "grid": { "left": 54, "right": 22, "top": 80, "bottom": 78, "containLabel": true },
+  "xAxis": {
+    "type": "category",
+    "data": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+    "splitArea": { "show": false }
+  },
+  "yAxis": {
+    "type": "category",
+    "data": ["09:00", "11:00", "13:00", "15:00", "17:00"],
+    "splitArea": { "show": false }
+  },
+  "visualMap": {
+    "min": 0,
+    "max": 10,
+    "orient": "horizontal",
+    "left": "center",
+    "bottom": 8,
+    "calculable": false,
+    "itemWidth": 10,
+    "itemHeight": 110,
+    "inRange": { "color": ["#0B1220", "#38BDF8", "#A78BFA"] }
+  },
+  "series": [
+    {
+      "name": "Queue",
+      "type": "heatmap",
+      "label": { "show": true },
+      "data": [
+        [0, 0, 1],
+        [0, 1, 3],
+        [0, 2, 5],
+        [0, 3, 4],
+        [0, 4, 2],
+        [1, 0, 2],
+        [1, 1, 4],
+        [1, 2, 6],
+        [1, 3, 7],
+        [1, 4, 3],
+        [2, 0, 1],
+        [2, 1, 2],
+        [2, 2, 4],
+        [2, 3, 5],
+        [2, 4, 4],
+        [3, 0, 3],
+        [3, 1, 5],
+        [3, 2, 8],
+        [3, 3, 9],
+        [3, 4, 6],
+        [4, 0, 2],
+        [4, 1, 3],
+        [4, 2, 5],
+        [4, 3, 4],
+        [4, 4, 1]
+      ]
+    }
+  ]
+}

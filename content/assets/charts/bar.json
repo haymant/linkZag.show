@@ -1,0 +1,34 @@
+{
+  "title": {
+    "text": "Verified task success",
+    "subtext": "% of tasks passing acceptance checks",
+    "left": "center",
+    "top": 0
+  },
+  "tooltip": { "trigger": "axis" },
+  "legend": { "bottom": 0 },
+  "grid": { "left": 44, "right": 20, "top": 82, "bottom": 54, "containLabel": true },
+  "xAxis": {
+    "type": "category",
+    "data": ["Spec", "Implement", "Test", "Review"]
+  },
+  "yAxis": {
+    "type": "value",
+    "max": 100,
+    "axisLabel": { "formatter": "{value}%" }
+  },
+  "series": [
+    {
+      "name": "Baseline",
+      "type": "bar",
+      "barWidth": 24,
+      "data": [82, 64, 70, 76]
+    },
+    {
+      "name": "Agent loop",
+      "type": "bar",
+      "barWidth": 24,
+      "data": [96, 88, 94, 91]
+    }
+  ]
+}

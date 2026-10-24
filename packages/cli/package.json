@@ -1,0 +1,19 @@
+{
+  "name": "@linkzag/cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "linkzag": "./src/index.ts"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@linkzag/capture-engine": "0.1.0",
+    "@linkzag/ffmpeg-engine": "0.1.0",
+    "@linkzag/scene-loader": "0.1.0",
+    "@linkzag/scene-types": "0.1.0",
+    "commander": "^15.0.0"
+  }
+}

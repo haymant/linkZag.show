@@ -1,0 +1,18 @@
+{
+  "name": "@linkzag/scene-loader",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@linkzag/scene-types": "0.1.0",
+    "gray-matter": "^4.0.3",
+    "yaml": "^2.8.1",
+    "zod": "^4.6.7"
+  },
+  "peerDependencies": {
+    "vite": "^8.0.0"
+  }
+}

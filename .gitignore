@@ -1,0 +1,25 @@
+node_modules/
+dist/
+.vite/
+.DS_Store
+*.log
+
+# Generated media & capture output
+capture/
+videos/
+output/
+.linkzag/
+
+# Test artefacts
+test-results/
+playwright-report/
+blob-report/
+coverage/
+tests/golden/**/*.actual.png
+tests/golden/**/*.diff.png
+
+# Local env and preview artefacts
+.preview/
+.env
+.env.*
+!.env.example
