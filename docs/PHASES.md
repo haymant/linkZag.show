@@ -161,4 +161,21 @@ commands passed. Evidence is a command plus its observed result, not a claim.
 6. CI workflow is syntactically valid and mirrors local checks.
 7. Commit exists; push attempted; result recorded.
 
-**Evidence:** _recorded after Phase 5 verification._
+**Evidence (2026-10-24; Node 24.22.0, npm 11.19.1, FFmpeg 9.0.2):**
+- `npm run test:all` → typecheck 0 errors; 47 unit/integration tests passed; renderer and
+  studio builds passed; 18 E2E/golden tests passed in 48.2 s. `playwright-report` and
+  `test-results/.last-run.json` report `passed`.
+- `videos/agentic-coding.mp4` → H.264, 1920×1080, `yuv420p`, 30 fps, 300 frames, 10.000 s,
+  468,333 bytes. `moov` at byte 36 precedes `mdat` at byte 4,411 and there are no audio streams.
+- Extracted frames at 0.5 s, 3.0 s, 8.0 s, and 9.97 s show the header/markdown, ECharts reveal,
+  Mermaid diagram, and the completed final composition.
+- `README.md`, `DEMO.md`, and the docs contain the clean-room install, preview, render, capture,
+  video, segment, manifest, URL API, and troubleshooting commands.
+- `.github/workflows/ci.yml` parses as YAML with a `verify` job; its steps mirror typecheck, unit/
+  integration tests, build, E2E/golden tests, and failure-artifact upload.
+- Git commit `6590b28984aed65fa4f05c0e055f8c78914a4216` contains 125 files. Remote
+  `origin` is `https://github.com/haymant/linkZag.show.git`.
+- Push is **blocked**: `git push -u origin main` returns `fatal: could not read Username for
+  'https://github.com': terminal prompts disabled`. This machine has no GitHub credential in
+  the osxkeychain, no SSH identity, no `gh` CLI, and no token in the environment. Authenticate
+  Git/GitHub, then run `git push -u origin main` from the repository root.
