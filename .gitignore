@@ -10,6 +10,10 @@ videos/
 output/
 .linkzag/
 
+# Scene/asset files produced by the commentary renderer
+content/scenes/generated/
+content/assets/generated/
+
 # Test artefacts
 test-results/
 playwright-report/
