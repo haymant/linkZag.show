@@ -185,8 +185,10 @@ from the scene theme.
 | `fitViewPadding` | `0..1` | Fit padding; default `0.12`. |
 | `flowAnimation` | object | Deterministic node/edge motion. |
 
-Node fields: `id`, `label`, `sublabel`, `x`, `y`, `width`, `height`, `kind`
-(`default`, `accent`, `muted`, `input`, `output`).
+Node fields: `id`, `label`, `sublabel`, `x`, `y`, `width`, `height`, `kind`,
+`token` (`default`, `accent`, `muted`, `input`, `output`, `place`, `transition`).
+`kind: place` renders a circle, `kind: transition` a silent bar, and
+`token: true` puts a marking dot inside a place.
 
 Edge fields: `id`, `source`, `target`, `label`, `kind` (`solid`, `dashed`, `accent`).
 

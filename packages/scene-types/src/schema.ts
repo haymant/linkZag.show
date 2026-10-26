@@ -130,7 +130,8 @@ export const XyflowNodeSchema = z
     y: zFiniteNumber.optional(),
     width: zFiniteNumber.positive().optional(),
     height: zFiniteNumber.positive().optional(),
-    kind: z.enum(['default', 'accent', 'muted', 'input', 'output']).optional(),
+    kind: z.enum(['default', 'accent', 'muted', 'input', 'output', 'place', 'transition']).optional(),
+    token: z.boolean().optional(),
   })
   .strict()
 

@@ -26,6 +26,7 @@ interface LzNodeData extends Record<string, unknown> {
   label: string
   sublabel?: string
   kind: NonNullable<ItemNode['kind']>
+  token?: boolean
 }
 
 type LzFlowNode = Node<LzNodeData, 'lz'>
@@ -66,6 +67,7 @@ function LzNodeView({ data }: NodeProps<LzFlowNode>) {
           />
         </Fragment>
       ))}
+      {data.token && <span className="lz-token" aria-hidden="true" />}
       <div className="lz-node__label">{data.label}</div>
       {data.sublabel && <div className="lz-node__sublabel">{data.sublabel}</div>}
     </div>
@@ -252,6 +254,7 @@ function buildGraph(
         label: node.label,
         ...(node.sublabel ? { sublabel: node.sublabel } : {}),
         kind: node.kind ?? 'default',
+        ...(node.token ? { token: true } : {}),
       },
       draggable: false,
       selectable: false,
