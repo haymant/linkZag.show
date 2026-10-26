@@ -27,6 +27,17 @@
   background: var(--lz-bg);
 }
 
+.lz-backdrop--image {
+  background-position: center;
+  background-size: cover;
+  opacity: 0.22;
+}
+
+.lz-backdrop--veil {
+  background: var(--lz-bg);
+  opacity: 0.84;
+}
+
 .lz-backdrop--theme::before {
   position: absolute;
   content: '';

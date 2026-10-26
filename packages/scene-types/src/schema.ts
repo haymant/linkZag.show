@@ -42,6 +42,7 @@ export const BackgroundSchema = z.union([
   z.literal('theme'),
   z.literal('transparent'),
   z.string().regex(HEX_COLOR_RE, 'Expected "theme", "transparent", or a hex colour such as #0B1020'),
+  z.string().regex(/^image:\S+$/, 'Expected image:<url> for an image backdrop'),
 ])
 export type BackgroundSpec = z.infer<typeof BackgroundSchema>
 

@@ -124,10 +124,12 @@ export function SceneStage({ scene, time, className, onReady, onError }: SceneSt
   )
 
   const scale = Math.min(1.35, Math.max(0.72, scene.width / 1920))
+  const imageBackground = scene.background.startsWith('image:')
+  const imageUrl = imageBackground ? scene.background.slice('image:'.length) : null
   const background =
     scene.background === 'transparent'
       ? 'transparent'
-      : scene.background === 'theme'
+      : scene.background === 'theme' || imageBackground
         ? tokens.background
         : scene.background
 
@@ -168,10 +170,25 @@ export function SceneStage({ scene, time, className, onReady, onError }: SceneSt
         <div
           className={[
             'lz-backdrop',
-            scene.background === 'theme' ? 'lz-backdrop--theme' : 'lz-backdrop--solid',
+            scene.background === 'theme' || imageBackground
+              ? 'lz-backdrop--theme'
+              : 'lz-backdrop--solid',
           ].join(' ')}
-          style={scene.background === 'theme' ? undefined : { backgroundColor: scene.background }}
+          style={
+            scene.background === 'theme' || imageBackground
+              ? undefined
+              : { backgroundColor: scene.background }
+          }
         />
+      )}
+      {imageUrl && (
+        <>
+          <div
+            className="lz-backdrop lz-backdrop--image"
+            style={{ backgroundImage: `url("${imageUrl}")` }}
+          />
+          <div className="lz-backdrop lz-backdrop--veil" />
+        </>
       )}
 
       <SceneHeader header={layout.header} time={time} theme={tokens} />
