@@ -19,7 +19,7 @@ URLs before the React runtime sees them.
 | `padding` | number | `96` | Outer padding for chrome and auto-flowed items. |
 | `theme` | `light` \| `dark` | `dark` | Theme tokens and bundled typography. |
 | `variant` | `slide` \| `item` | `slide` | `item` removes chrome and defaults to transparency. |
-| `background` | `theme` \| `transparent` \| hex | variant default | `theme` uses the theme background, hex values are literal. |
+| `background` | `theme` \| `transparent` \| hex \| `image:<url>` | variant default | `theme` uses the theme background, hex values are literal, `image:` draws a semi-transparent image backdrop under the theme veil. |
 | `accent` | hex | theme accent | Per-scene accent override. |
 | `items` | array | `[]` | Visual items. |
 | `meta` | object | — | Free-form metadata; preserved but not rendered. |
