@@ -52,6 +52,9 @@ function themedSeries(series: unknown, theme: ThemeTokens): unknown {
 
   const copy: UnknownRecord = { ...series, animation: false }
   const lineStyle = isRecord(copy.lineStyle) ? { width: 3, ...copy.lineStyle } : { width: 3 }
+  if (isRecord(copy.label)) {
+    copy.label = { color: theme.foreground, ...copy.label }
+  }
   if (copy.type === 'line') copy.lineStyle = lineStyle
   if (copy.type === 'bar') {
     copy.itemStyle = isRecord(copy.itemStyle)
