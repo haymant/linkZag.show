@@ -88,7 +88,7 @@ function cleanupMessage(error: unknown): string {
   return message.replace(/\u001b\[[0-9;]*m/g, '').replace(/^Error:\s*/i, '').trim()
 }
 
-export function MermaidItem({ item, theme, onReady, onError }: Props) {
+export function MermaidItem({ item, theme, scene, onReady, onError }: Props) {
   const hostRef = useRef<HTMLDivElement | null>(null)
   const readyRef = useRef(onReady)
   const errorRef = useRef(onError)
@@ -128,7 +128,10 @@ export function MermaidItem({ item, theme, onReady, onError }: Props) {
 
         const svg = await enqueue(async () => {
           mermaid.initialize(config)
-          const result = await mermaid.render(id, item.code)
+          const code = scene.orientation === 'portrait'
+            ? item.code.replace(/\b(flowchart|graph)\s+(LR|RL)\b/g, '$1 TB')
+            : item.code
+          const result = await mermaid.render(id, code)
           return result.svg
         })
         if (cancelled) return

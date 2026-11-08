@@ -61,7 +61,8 @@ function buildHeader(scene: ResolvedScene, contentWidth: number): HeaderLayout |
   if (scene.variant !== 'slide') return null
   if (!scene.eyebrow && !scene.title && !scene.subtitle) return null
 
-  const titleSize = clamp(scene.width * 0.048, 34, 104)
+  const portrait = scene.orientation === 'portrait'
+  const titleSize = clamp(scene.width * (portrait ? 0.060 : 0.048), 34, 104)
   const subtitleSize = clamp(titleSize * 0.34, 16, 34)
   const eyebrowSize = clamp(titleSize * 0.2, 12, 21)
   const eyebrowLineHeight = eyebrowSize * 1.25

@@ -196,6 +196,7 @@ interface BuiltGraph {
 function buildGraph(
   item: Extract<SceneItem, { type: 'xyflow' }>,
   theme: ThemeTokens,
+  orientation?: 'landscape' | 'portrait',
 ): BuiltGraph {
   const nodeIds = new Set(item.nodes.map((node) => node.id))
   if (nodeIds.size !== item.nodes.length) throw new Error('XYFlow node ids must be unique')
@@ -215,7 +216,7 @@ function buildGraph(
   if (needsDagre) {
     const graph = new dagre.graphlib.Graph()
     graph.setGraph({
-      rankdir: item.direction ?? 'LR',
+      rankdir: orientation === 'portrait' ? 'TB' : item.direction ?? 'LR',
       nodesep: 58,
       ranksep: 96,
       marginx: 20,
@@ -353,13 +354,13 @@ function animateGraph(graph: BuiltGraph, time: number, timing: FlowTiming): Buil
   return { nodes, edges }
 }
 
-export function XyflowItem({ item, theme, time, enter, onReady, onError }: Props) {
+export function XyflowItem({ item, theme, scene, time, enter, onReady, onError }: Props) {
   const readyRef = useRef(onReady)
   const errorRef = useRef(onError)
   readyRef.current = onReady
   errorRef.current = onError
 
-  const graph = useMemo(() => buildGraph(item, theme), [item, theme])
+  const graph = useMemo(() => buildGraph(item, theme, scene.orientation), [item, theme])
   const timing = flowTiming(item, enter)
   const finished = !timing.enabled || time >= timing.end
   const clock = finished ? Number.POSITIVE_INFINITY : time

@@ -234,6 +234,7 @@ export const SceneSchema = z
     padding: zFiniteNumber.min(0).default(96),
     theme: z.enum(THEME_NAMES).optional(),
     variant: z.enum(SCENE_VARIANTS).optional(),
+    orientation: z.enum(['landscape', 'portrait']).optional(),
     background: BackgroundSchema.optional(),
     accent: zHex.optional(),
     items: z.array(SceneItemSchema).default([]),
