@@ -19,6 +19,7 @@ import { SceneHeader } from './SceneHeader'
 
 export interface SceneStageProps {
   scene: ResolvedScene
+  chartRenderer?: 'svg' | 'canvas'
   time: number
   className?: string
   onReady?: () => void
@@ -31,7 +32,7 @@ function errorMessage(index: number, type: string, error: Error): string {
   return `items.${index} (${type}): ${error.message}`
 }
 
-export function SceneStage({ scene, time, className, onReady, onError }: SceneStageProps) {
+export function SceneStage({ scene, chartRenderer = 'svg', time, className, onReady, onError }: SceneStageProps) {
   const tokens = useMemo(() => getTheme(scene.theme), [scene.theme])
   const layout = useMemo(() => buildSceneLayout(scene), [scene])
   const [ready, setReady] = useState(false)
@@ -199,6 +200,7 @@ export function SceneStage({ scene, time, className, onReady, onError }: SceneSt
             key={`${layoutItem.index}-${layoutItem.item.id ?? layoutItem.item.type}`}
             layoutItem={layoutItem}
             scene={scene}
+            chartRenderer={chartRenderer}
             theme={tokens}
             time={time}
             onItemReady={markItemReady}

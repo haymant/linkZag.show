@@ -17,6 +17,7 @@ export interface StillOptions {
   variant?: string
   background?: string
   transparent?: boolean
+  chartRenderer?: 'svg' | 'canvas'
   timeoutMs?: number
 }
 
@@ -41,6 +42,22 @@ export interface FrameCaptureResult {
   from: number
   to: number
   directory: string
+}
+
+export interface RecordingOptions extends StillOptions {
+  recordingDir: string
+  fps: number
+  from?: number
+  to?: number
+}
+
+export interface RecordingCaptureResult {
+  file: string
+  trimStartSeconds: number
+  durationSeconds: number
+  fps: number
+  from: number
+  to: number
 }
 
 export class SceneCaptureError extends Error {
@@ -73,6 +90,7 @@ export interface CaptureSession {
   baseUrl: string
   captureStill: (target: SceneTarget, options?: StillOptions) => Promise<Buffer>
   captureFrames: (target: SceneTarget, options: FrameOptions) => Promise<FrameCaptureResult>
+  captureVideo: (target: SceneTarget, options: RecordingOptions) => Promise<RecordingCaptureResult>
   close: () => Promise<void>
 }
 
@@ -84,6 +102,7 @@ function sceneUrl(baseUrl: string, target: SceneTarget, options: StillOptions, t
   if (time !== undefined) url.searchParams.set('t', String(time))
   if (options.theme) url.searchParams.set('theme', options.theme)
   if (options.variant) url.searchParams.set('variant', options.variant)
+  if (options.chartRenderer) url.searchParams.set('chartRenderer', options.chartRenderer)
   if (options.transparent) {
     url.searchParams.set('transparent', '1')
   } else if (options.background) {
@@ -273,6 +292,86 @@ export async function createCaptureSession(options: { baseUrl: string; headless?
         from,
         to,
         directory: frameOptions.framesDir,
+      }
+    },
+
+    async captureVideo(target, recordingOptions) {
+      const from = Math.max(0, recordingOptions.from ?? 0)
+      const to = Math.min(target.duration, recordingOptions.to ?? target.duration)
+      if (!(to > from)) {
+        throw new SceneCaptureError(`Nothing to record: from=${from}s, to=${to}s.`)
+      }
+      if (!(recordingOptions.fps > 0)) {
+        throw new SceneCaptureError(`Invalid fps: ${recordingOptions.fps}`)
+      }
+      await fs.mkdir(recordingOptions.recordingDir, { recursive: true })
+
+      const theme = recordingOptions.theme === 'light' ? 'light' : 'dark'
+      const context = await browser.newContext({
+        viewport: { width: target.width, height: target.height },
+        deviceScaleFactor: 1,
+        colorScheme: theme,
+        recordVideo: {
+          dir: recordingOptions.recordingDir,
+          size: { width: target.width, height: target.height },
+        },
+      })
+      const page = await context.newPage()
+      const video = page.video()
+      const errors: string[] = []
+      page.on('pageerror', (error) => errors.push(`pageerror: ${error.message}`))
+      page.on('console', (message) => {
+        if (message.type() === 'error') errors.push(`console: ${message.text()}`)
+      })
+
+      const recordingStartedAt = Date.now()
+      let timelineStartedAt = recordingStartedAt
+      try {
+        const url = sceneUrl(baseUrl, target, recordingOptions, from)
+        const response = await page.goto(url, { waitUntil: 'domcontentloaded' })
+        if (response && !response.ok()) {
+          throw new SceneCaptureError(`Renderer returned HTTP ${response.status()} for ${url}`)
+        }
+        await waitForScene(page, recordingOptions.timeoutMs ?? 60_000)
+        if (errors.length) {
+          throw new SceneCaptureError('The renderer reported console or page errors.', errors)
+        }
+        await page.evaluate(async (startTime) => {
+          const api = (window as unknown as { __LINKZAG__?: { setTime: (next: number) => Promise<void> } }).__LINKZAG__
+          if (!api) throw new Error('window.__LINKZAG__ is unavailable')
+          await api.setTime(startTime)
+        }, from)
+        timelineStartedAt = Date.now()
+
+        await page.evaluate(async ({ start, end }) => {
+          const api = (window as unknown as { __LINKZAG__?: { setTime: (next: number) => Promise<void> } }).__LINKZAG__
+          if (!api) throw new Error('window.__LINKZAG__ is unavailable')
+          const durationMs = (end - start) * 1000
+          const startedAt = performance.now()
+          while (true) {
+            const elapsedMs = Math.min(performance.now() - startedAt, durationMs)
+            await api.setTime(start + elapsedMs / 1000)
+            if (elapsedMs >= durationMs) break
+            await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
+          }
+        }, { start: from, end: to })
+        if (errors.length) {
+          throw new SceneCaptureError('The renderer reported console or page errors while recording.', errors)
+        }
+      } finally {
+        await page.close()
+        await context.close()
+      }
+
+      if (!video) throw new SceneCaptureError('Playwright did not create a video recording.')
+      const file = await video.path()
+      return {
+        file,
+        trimStartSeconds: Math.max(0, (timelineStartedAt - recordingStartedAt) / 1000),
+        durationSeconds: to - from,
+        fps: recordingOptions.fps,
+        from,
+        to,
       }
     },
 

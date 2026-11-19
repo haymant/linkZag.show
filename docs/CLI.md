@@ -75,18 +75,21 @@ range, frame count, and per-frame time/bytes.
 
 ## `video`
 
-Capture frames and encode video. Frames are temporary unless `--keep-frames` is set.
+Create video in Flash or Full capture mode. Flash is the default and records the browser in real time;
+Full captures fixed-time PNG screenshots and remains the deterministic review/export path.
 
 ```bash
 npm run video -- --scene agentic-coding --format mp4
-npm run video -- --scene demo-overlay --format webm
-npm run video -- --scene agentic-coding --format mp4,webm --keep-frames
-npm run video -- --scene overlay-architecture --format mp4 --matte "#00FF00"
+npm run video -- --scene agentic-coding --format mp4                 # Flash (default)
+npm run video -- --scene demo-overlay --format webm --mode full      # Full preserves alpha
+npm run video -- --scene agentic-coding --format mp4,webm --mode full --keep-frames
+npm run video -- --scene overlay-architecture --format mp4 --matte "#00FF00" --mode full
 ```
 
 | Option | Default | Description |
 | --- | --- | --- |
 | `--format <list>` | `mp4` | `mp4`, `webm`, `mov`, comma separated. |
+| `--capture-mode, --mode <flash\|full>` | `flash` | Flash records in real time and uses Canvas charts; Full captures deterministic timestamped screenshots and uses SVG charts. |
 | `--fps <fps>` | `30` | Frame rate. |
 | `--from <seconds>` | `0` | First frame. |
 | `--to <seconds>` | scene duration | End time. |
@@ -97,6 +100,12 @@ npm run video -- --scene overlay-architecture --format mp4 --matte "#00FF00"
 | `--out <dir>` | `output/<id>` | Video directory. |
 
 Output names are `<scene-id>.<ext>`.
+
+Flash is a speed-first, wall-clock recording mode. Browser scheduling can drop frames on a slow
+machine, so output is not bitwise reproducible; its MP4 is normalized to the requested frame rate
+and scene duration. Flash currently supports opaque MP4 only. Use `--mode full` for alpha, WebM/MOV,
+`--keep-frames`, deterministic per-frame inspection, or when the Flash result's motion/text quality
+is not acceptable. `--frames <dir>` encodes existing frames and bypasses browser capture mode.
 
 ### Codecs
 
@@ -134,13 +143,14 @@ Produce a reusable segment package with a still, one or more videos, and `segmen
 
 ```bash
 npm run segment -- --scene agentic-coding
-npm run segment -- --scene demo-overlay --format png,webm,mov
+npm run segment -- --scene demo-overlay --format png,webm,mov --mode full
 npm run segment -- --scene demo-hook --format png --still-time 2
 ```
 
 | Option | Default | Description |
 | --- | --- | --- |
 | `--format <list>` | `png,mp4` | Any of `png`, `mp4`, `webm`, `mov`. |
+| `--capture-mode, --mode <flash\|full>` | `flash` | Flash records an opaque MP4 in real time with Canvas charts; Full uses deterministic screenshots/SVG charts and supports all formats. |
 | `--still-time <seconds>` | scene duration | Still frame time. |
 | `--fps <fps>` | `30` | Video frame rate. |
 | `--matte <hex>` | — | Matte colour for transparent MP4. |
@@ -156,6 +166,11 @@ output/demo-overlay/
   demo-overlay.webm
   segment.json
 ```
+
+Flash segment manifests record `captureMode`, `chartRenderer`, and `deterministic: false` under
+`options`; Full records `deterministic: true`. Segment stills use the selected chart backend so
+they match the corresponding video mode. Transparent scenes and non-MP4 Flash video requests must
+select Full.
 
 `segment.json`:
 

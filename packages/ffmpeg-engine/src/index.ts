@@ -16,6 +16,17 @@ export interface EncodeOptions {
   crf?: number
 }
 
+export interface RecordingEncodeOptions {
+  input: string
+  output: string
+  width: number
+  height: number
+  fps: number
+  trimStartSeconds: number
+  durationSeconds: number
+  crf?: number
+}
+
 export interface VideoProbe {
   file: string
   bytes: number
@@ -163,6 +174,44 @@ export function buildEncodeArgs(options: EncodeOptions): string[] {
   return args
 }
 
+export function buildRecordingEncodeArgs(options: RecordingEncodeOptions): string[] {
+  if (options.width % 2 !== 0 || options.height % 2 !== 0) {
+    throw new Error(`MP4/H.264 with yuv420p needs even dimensions; got ${options.width}x${options.height}.`)
+  }
+  if (!(options.fps > 0) || !(options.durationSeconds > 0) || options.trimStartSeconds < 0) {
+    throw new Error('Recording encode requires positive fps/duration and a non-negative trim offset.')
+  }
+  const frameCount = Math.max(1, Math.round(options.durationSeconds * options.fps))
+  return [
+    '-y',
+    '-hide_banner',
+    '-loglevel',
+    'error',
+    '-i',
+    options.input,
+    '-ss',
+    options.trimStartSeconds.toFixed(6),
+    '-t',
+    options.durationSeconds.toFixed(6),
+    '-vf',
+    `fps=${options.fps},scale=${options.width}:${options.height}:flags=lanczos,format=yuv420p`,
+    '-frames:v',
+    String(frameCount),
+    '-c:v',
+    'libx264',
+    '-preset',
+    'medium',
+    '-crf',
+    String(options.crf ?? 18),
+    '-pix_fmt',
+    'yuv420p',
+    '-movflags',
+    '+faststart',
+    '-an',
+    options.output,
+  ]
+}
+
 export async function encodeFrames(options: EncodeOptions): Promise<string> {
   if (options.matte && options.format !== 'mp4') {
     throw new Error(`--matte only applies to MP4 output; ${options.format} carries alpha directly.`)
@@ -173,6 +222,16 @@ export async function encodeFrames(options: EncodeOptions): Promise<string> {
   }
   await fs.mkdir(path.dirname(path.resolve(options.output)), { recursive: true })
   await run(process.env.FFMPEG_PATH ?? 'ffmpeg', buildEncodeArgs(options))
+  return options.output
+}
+
+export async function encodeRecordingToMp4(options: RecordingEncodeOptions): Promise<string> {
+  const stat = await fs.stat(options.input).catch(() => null)
+  if (!stat?.isFile() || stat.size === 0) {
+    throw new Error(`Recording input is missing or empty: ${options.input}`)
+  }
+  await fs.mkdir(path.dirname(path.resolve(options.output)), { recursive: true })
+  await run(process.env.FFMPEG_PATH ?? 'ffmpeg', buildRecordingEncodeArgs(options))
   return options.output
 }
 

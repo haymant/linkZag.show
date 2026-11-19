@@ -6,9 +6,11 @@ import { Command, InvalidArgumentError } from 'commander'
 import {
   assertFfmpeg,
   encodeFrames,
+  encodeRecordingToMp4,
   probeVideo,
   videoExtension,
   type EncodeOptions,
+  type RecordingEncodeOptions,
   type VideoFormat,
   type VideoProbe,
 } from '@linkzag/ffmpeg-engine'
@@ -38,6 +40,8 @@ interface CommandOptions extends CommonOptions {
   frames?: string
   keepFrames?: boolean
   stillTime?: number
+  captureMode?: 'flash' | 'full'
+  mode?: 'flash' | 'full'
 }
 
 const VIDEO_FORMATS = ['mp4', 'webm', 'mov'] as const
@@ -70,6 +74,17 @@ function variantValue(value: string): 'auto' | 'slide' | 'item' {
     throw new InvalidArgumentError('Expected "auto", "slide", or "item".')
   }
   return value
+}
+
+function captureModeValue(value: string): 'flash' | 'full' {
+  if (value !== 'flash' && value !== 'full') {
+    throw new InvalidArgumentError('Expected "flash" or "full".')
+  }
+  return value
+}
+
+function chartRendererFor(mode: 'flash' | 'full'): 'canvas' | 'svg' {
+  return mode === 'flash' ? 'canvas' : 'svg'
 }
 
 function addCommonOptions(command: Command): Command {
@@ -148,6 +163,7 @@ async function captureFramesFor(
   fps: number,
   from: number,
   to: number,
+  chartRenderer: 'svg' | 'canvas' = 'svg',
 ) {
   return withCaptureSession(prepared, common(options), async (session) => {
     log(options, `Capturing ${Math.round((to - from) * fps)} frames at ${fps} fps...`)
@@ -160,8 +176,34 @@ async function captureFramesFor(
       variant: prepared.resolved.variant,
       background: prepared.resolved.background,
       transparent: prepared.transparent,
+      chartRenderer,
       timeoutMs: options.timeout,
       onProgress: frameProgress(options, 'frame'),
+    })
+  })
+}
+
+async function captureVideoFor(
+  prepared: PreparedScene,
+  options: CommandOptions,
+  recordingDir: string,
+  fps: number,
+  from: number,
+  to: number,
+) {
+  return withCaptureSession(prepared, common(options), (session) => {
+    log(options, `Recording ${to - from}s in real time at a requested ${fps} fps (Canvas charts)...`)
+    return session.captureVideo(prepared.target, {
+      recordingDir,
+      fps,
+      from,
+      to,
+      theme: prepared.resolved.theme,
+      variant: prepared.resolved.variant,
+      background: prepared.resolved.background,
+      transparent: prepared.transparent,
+      chartRenderer: 'canvas',
+      timeoutMs: options.timeout,
     })
   })
 }
@@ -293,6 +335,8 @@ async function main(): Promise<void> {
       .command('video')
       .description('Capture frames and encode MP4, transparent WebM, or ProRes 4444.')
       .option('--format <formats>', 'mp4, webm, mov (comma separated)', 'mp4')
+      .option('--capture-mode <mode>', 'flash (recordVideo, default) or full (deterministic screenshots)', captureModeValue, 'flash')
+      .option('--mode <mode>', 'alias for --capture-mode', captureModeValue)
       .option('--fps <fps>', 'frames per second', positiveNumber, 30)
       .option('--from <seconds>', 'first scene time', nonNegativeNumber)
       .option('--to <seconds>', 'end scene time', nonNegativeNumber)
@@ -318,6 +362,15 @@ async function main(): Promise<void> {
     const to = Math.min(options.to ?? prepared.resolved.duration, prepared.resolved.duration)
     if (to <= from) throw new Error(`--to (${to}) must be greater than --from (${from}).`)
 
+    const mode = options.mode ?? options.captureMode ?? 'flash'
+    if (!options.frames && mode === 'flash') {
+      if (prepared.transparent) throw new Error('Flash recordVideo cannot preserve transparency; use --mode full.')
+      if (formats.some((format) => format !== 'mp4')) {
+        throw new Error('Flash recordVideo currently exports opaque MP4 only; use --mode full for WebM or MOV.')
+      }
+      if (options.keepFrames) throw new Error('--keep-frames applies to Full screenshot capture; use --mode full.')
+    }
+
     const outputDir = resolveOutput(options.out, prepared.outputDir)
     const temp = !options.frames
     const framesDir = options.frames
@@ -328,9 +381,39 @@ async function main(): Promise<void> {
 
     try {
       if (!options.frames) {
-        await captureFramesFor(prepared, options, framesDir, fps, from, to)
+        if (mode === 'flash') {
+          const recordingDir = await fs.mkdtemp(path.join(os.tmpdir(), `linkzag-record-${prepared.slug}-`))
+          try {
+            const recording = await captureVideoFor(prepared, options, recordingDir, fps, from, to)
+            for (const format of formats) {
+              const file = path.join(outputDir, `${prepared.slug}.${videoExtension(format)}`)
+              const encodeOptions: RecordingEncodeOptions = {
+                input: recording.file,
+                output: file,
+                width: prepared.resolved.width,
+                height: prepared.resolved.height,
+                fps,
+                trimStartSeconds: recording.trimStartSeconds,
+                durationSeconds: recording.durationSeconds,
+                crf: options.crf,
+              }
+              await encodeRecordingToMp4(encodeOptions)
+              const probe = await probeVideo(file)
+              if (probe.width !== prepared.resolved.width || probe.height !== prepared.resolved.height) {
+                throw new Error(`Flash recording dimensions differ from the scene: ${probe.width}x${probe.height}.`)
+              }
+              log(options, `  ${relativeTo(prepared.projectRoot, file)}  ${probe.width}x${probe.height}  ${probe.codec}  ${probe.duration.toFixed(2)}s  ${formatBytes(probe.bytes)}`)
+            }
+          } finally {
+            await fs.rm(recordingDir, { recursive: true, force: true })
+          }
+        } else {
+          await captureFramesFor(prepared, options, framesDir, fps, from, to, 'svg')
+        }
       }
-      await encodeAll(prepared, options, framesDir, formats, outputDir, matte)
+      if (options.frames || mode === 'full') {
+        await encodeAll(prepared, options, framesDir, formats, outputDir, matte)
+      }
     } finally {
       if (temp) await fs.rm(framesDir, { recursive: true, force: true })
     }
@@ -341,6 +424,8 @@ async function main(): Promise<void> {
       .command('segment')
       .description('Produce a reusable segment package: still, video(s), and segment.json.')
       .option('--format <formats>', 'png, mp4, webm, mov (comma separated)', 'png,mp4')
+      .option('--capture-mode <mode>', 'flash (recordVideo, default) or full (deterministic screenshots)', captureModeValue, 'flash')
+      .option('--mode <mode>', 'alias for --capture-mode', captureModeValue)
       .option('--fps <fps>', 'frames per second', positiveNumber, 30)
       .option('--matte <color>', 'chroma-key colour for transparent MP4 (for example #00FF00)')
       .option('--crf <value>', 'quality value (lower is better)', positiveNumber)
@@ -359,7 +444,15 @@ async function main(): Promise<void> {
       (VIDEO_FORMATS as readonly string[]).includes(format),
     )
     const wantsStill = formats.includes('png')
+    const mode = options.mode ?? options.captureMode ?? 'flash'
     const matte = options.matte
+    if (videos.length && mode === 'flash') {
+      if (prepared.transparent) throw new Error('Flash recordVideo cannot preserve transparency; use --mode full.')
+      if (videos.some((format) => format !== 'mp4')) {
+        throw new Error('Flash recordVideo currently exports opaque MP4 only; use --mode full for WebM or MOV.')
+      }
+      if (options.keepFrames) throw new Error('--keep-frames applies to Full screenshot capture; use --mode full.')
+    }
     ensureVideoCompatibility(prepared, videos, matte)
     if (videos.length) await assertFfmpeg()
 
@@ -371,14 +464,15 @@ async function main(): Promise<void> {
     if (wantsStill) {
       const stillFile = path.join(outputDir, `${prepared.slug}-still.png`)
       log(options, `Capturing still...`)
-      const still = await withCaptureSession(prepared, common(options), (session) =>
-        writeStill(
-          prepared,
-          session,
-          stillFile,
-          Math.min(options.stillTime ?? prepared.resolved.duration, prepared.resolved.duration),
-        ),
-      )
+        const still = await withCaptureSession(prepared, common(options), (session) =>
+          writeStill(
+            prepared,
+            session,
+            stillFile,
+            Math.min(options.stillTime ?? prepared.resolved.duration, prepared.resolved.duration),
+            chartRendererFor(mode),
+          ),
+        )
       files.push({
         format: 'png',
         path: relativeTo(prepared.projectRoot, still.file),
@@ -397,8 +491,29 @@ async function main(): Promise<void> {
       : await fs.mkdtemp(path.join(os.tmpdir(), `linkzag-${prepared.slug}-`))
     try {
       if (videos.length) {
-        await captureFramesFor(prepared, options, framesDir, fps, 0, prepared.resolved.duration)
-        probes = await encodeAll(prepared, options, framesDir, videos, outputDir, matte)
+        if (mode === 'flash') {
+          const recordingDir = await fs.mkdtemp(path.join(os.tmpdir(), `linkzag-record-${prepared.slug}-`))
+          try {
+            const recording = await captureVideoFor(prepared, options, recordingDir, fps, 0, prepared.resolved.duration)
+            const file = path.join(outputDir, `${prepared.slug}.mp4`)
+            await encodeRecordingToMp4({
+              input: recording.file,
+              output: file,
+              width: prepared.resolved.width,
+              height: prepared.resolved.height,
+              fps,
+              trimStartSeconds: recording.trimStartSeconds,
+              durationSeconds: recording.durationSeconds,
+              crf: options.crf,
+            })
+            probes = [await probeVideo(file)]
+          } finally {
+            await fs.rm(recordingDir, { recursive: true, force: true })
+          }
+        } else {
+          await captureFramesFor(prepared, options, framesDir, fps, 0, prepared.resolved.duration, 'svg')
+          probes = await encodeAll(prepared, options, framesDir, videos, outputDir, matte)
+        }
       }
     } finally {
       if (!options.keepFrames) await fs.rm(framesDir, { recursive: true, force: true })
@@ -436,6 +551,9 @@ async function main(): Promise<void> {
       },
       options: {
         fps,
+        captureMode: mode,
+        chartRenderer: chartRendererFor(mode),
+        deterministic: mode === 'full',
         transparent: prepared.transparent,
         matte: matte ?? null,
         formats,

@@ -62,6 +62,8 @@ test.describe('CLI', () => {
       baseUrl,
       '--format',
       'png,webm',
+      '--capture-mode',
+      'full',
       '--fps',
       '5',
       '--width',
@@ -78,11 +80,14 @@ test.describe('CLI', () => {
       await fs.readFile(path.join(out, 'segment.json'), 'utf8'),
     ) as {
       kind: string
-      options: { transparent: boolean }
+      options: { transparent: boolean; captureMode: string; chartRenderer: string; deterministic: boolean }
       files: Array<{ format: string; transparent: boolean; width: number; height: number }>
     }
     expect(manifest.kind).toBe('linkzag-segment')
     expect(manifest.options.transparent).toBe(true)
+    expect(manifest.options.captureMode).toBe('full')
+    expect(manifest.options.chartRenderer).toBe('svg')
+    expect(manifest.options.deterministic).toBe(true)
     expect(manifest.files.map((file) => file.format)).toEqual(['png', 'webm'])
     expect(manifest.files[0]?.transparent).toBe(true)
     expect(manifest.files[1]?.transparent).toBe(true)
@@ -90,6 +95,36 @@ test.describe('CLI', () => {
 
     const still = PNG.sync.read(await fs.readFile(path.join(out, 'demo-overlay-still.png')))
     expect(still.data[3]).toBe(0)
+    await fs.rm(dir, { recursive: true, force: true })
+  })
+
+  test('video defaults to Flash recordVideo and writes an MP4', async () => {
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'linkzag-cli-flash-'))
+    const out = path.join(dir, 'video')
+    await linkzag([
+      'video',
+      '--scene',
+      'content/scenes/demo/01-hook.yaml',
+      '--base-url',
+      baseUrl,
+      '--format',
+      'mp4',
+      '--from',
+      '0',
+      '--to',
+      '0.5',
+      '--width',
+      '320',
+      '--height',
+      '180',
+      '--out',
+      out,
+      '--quiet',
+    ])
+    const files = await fs.readdir(out)
+    const output = files.find((file) => file.endsWith('.mp4'))
+    expect(output).toBeTruthy()
+    expect((await fs.stat(path.join(out, output!))).size).toBeGreaterThan(0)
     await fs.rm(dir, { recursive: true, force: true })
   })
 

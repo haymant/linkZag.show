@@ -10,7 +10,7 @@ import {
   type CaptureServer,
   type CaptureSession,
 } from '@linkzag/capture-engine'
-import { assertFfmpeg, encodeFrames, probeVideo } from '@linkzag/ffmpeg-engine'
+import { assertFfmpeg, encodeFrames, encodeRecordingToMp4, probeVideo } from '@linkzag/ffmpeg-engine'
 
 const projectRoot = process.cwd()
 let server: CaptureServer
@@ -79,6 +79,46 @@ describe('capture integration', () => {
     const second = await session.captureStill(target, { time: 1.25 })
     expect(second.equals(first)).toBe(true)
   })
+
+  it('records a Flash video, trims renderer startup, and transcodes a fixed-rate MP4', async () => {
+    const loaded = loadScene('title-card', { projectRoot })
+    const recording = await session.captureVideo(
+      {
+        scene: loaded.relativePath,
+        width: 320,
+        height: 180,
+        duration: loaded.scene.duration,
+      },
+      {
+        recordingDir: path.join(tempRoot, 'flash-recording'),
+        fps: 10,
+        from: 0,
+        to: 0.4,
+        chartRenderer: 'canvas',
+      },
+    )
+    expect((await fs.stat(recording.file)).size).toBeGreaterThan(0)
+    expect(recording.trimStartSeconds).toBeGreaterThan(0)
+    expect(recording.durationSeconds).toBe(0.4)
+
+    const output = path.join(tempRoot, 'flash.mp4')
+    await encodeRecordingToMp4({
+      input: recording.file,
+      output,
+      width: 320,
+      height: 180,
+      fps: 10,
+      trimStartSeconds: recording.trimStartSeconds,
+      durationSeconds: recording.durationSeconds,
+    })
+    const probe = await probeVideo(output)
+    expect(probe.codec).toBe('h264')
+    expect(probe.width).toBe(320)
+    expect(probe.height).toBe(180)
+    expect(probe.fps).toBe(10)
+    expect(probe.duration).toBeGreaterThanOrEqual(0.3)
+    expect(probe.duration).toBeLessThanOrEqual(0.5)
+  }, 120_000)
 
   it('captures frame sequences and encodes MP4, WebM alpha, and ProRes', async () => {
     const loaded = loadScene('title-card', { projectRoot })

@@ -53,6 +53,13 @@ test.describe('renderer URL API', () => {
     expect(result.hasChart).toBe(true)
   })
 
+  test('renders ECharts to Canvas when the capture override requests it', async ({ page }) => {
+    await page.goto(`/?scene=${encodeURIComponent(scene)}&t=0&chartRenderer=canvas&w=960&h=540`)
+    await expect(page.locator('.lz-scene')).toHaveAttribute('data-linkzag-ready', 'true')
+    await expect(page.locator('.lz-echart canvas').first()).toBeVisible()
+    await expect(page.locator('.lz-echart svg')).toHaveCount(0)
+  })
+
   test('defaults an omitted t to the final frame', async ({ page }) => {
     await page.goto(`/?scene=${encodeURIComponent(scene)}&w=960&h=540`)
     await expect(page.locator('.lz-scene')).toHaveAttribute('data-linkzag-ready', 'true')

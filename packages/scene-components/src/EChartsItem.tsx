@@ -51,7 +51,7 @@ import type { ItemRenderProps } from './types'
 
 type Props = ItemRenderProps<Extract<SceneItem, { type: 'echarts' }>>
 
-export function EChartsItem({ item, theme, scene, time, enter, onReady, onError }: Props) {
+export function EChartsItem({ item, theme, scene, chartRenderer, time, enter, onReady, onError }: Props) {
   const hostRef = useRef<HTMLDivElement | null>(null)
   const chartRef = useRef<ECharts | null>(null)
   const baseOptionRef = useRef<EChartsOption | null>(null)
@@ -84,7 +84,7 @@ export function EChartsItem({ item, theme, scene, time, enter, onReady, onError 
       const option = themeChartOption(orientOption(item.option as EChartsOption, scene.orientation), theme)
       baseOptionRef.current = option
       chart = echarts.init(host, undefined, {
-        renderer: 'svg',
+        renderer: chartRenderer ?? 'svg',
         width: host.clientWidth,
         height: host.clientHeight,
       })

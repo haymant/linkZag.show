@@ -4,6 +4,7 @@ export interface ItemRenderProps<T extends SceneItem = SceneItem> {
   item: T
   theme: ThemeTokens
   scene: ResolvedScene
+  chartRenderer?: 'svg' | 'canvas'
   time: number
   enter: EnterSpec
   width: number

@@ -18,6 +18,7 @@ import { ItemErrorBoundary } from './ItemErrorBoundary'
 interface Props {
   layoutItem: LayoutItem
   scene: ResolvedScene
+  chartRenderer: 'svg' | 'canvas'
   theme: ThemeTokens
   time: number
   onItemReady: (index: number) => void
@@ -28,6 +29,7 @@ function RenderItem({
   item,
   theme,
   scene,
+  chartRenderer,
   time,
   enter,
   width,
@@ -39,7 +41,7 @@ function RenderItem({
     case 'markdown':
       return <MarkdownItem item={item} theme={theme} scene={scene} time={time} enter={enter} width={width} height={height} onReady={onReady} onError={onError} />
     case 'echarts':
-      return <EChartsItem item={item} theme={theme} scene={scene} time={time} enter={enter} width={width} height={height} onReady={onReady} onError={onError} />
+      return <EChartsItem item={item} theme={theme} scene={scene} chartRenderer={chartRenderer} time={time} enter={enter} width={width} height={height} onReady={onReady} onError={onError} />
     case 'mermaid':
       return <MermaidItem item={item} theme={theme} scene={scene} time={time} enter={enter} width={width} height={height} onReady={onReady} onError={onError} />
     case 'xyflow':
@@ -55,7 +57,7 @@ function RenderItem({
   }
 }
 
-export function ItemFrame({ layoutItem, scene, theme, time, onItemReady, onItemError }: Props) {
+export function ItemFrame({ layoutItem, scene, chartRenderer = 'svg', theme, time, onItemReady, onItemError }: Props) {
   const { item, rect, enter, index } = layoutItem
   const animated = animatedStyle(enter, time)
   const opacity = (item.opacity ?? 1) * animated.opacity
@@ -88,6 +90,7 @@ export function ItemFrame({ layoutItem, scene, theme, time, onItemReady, onItemE
           item={item}
           theme={theme}
           scene={scene}
+          chartRenderer={chartRenderer}
           time={time}
           enter={enter}
           width={rect.width}

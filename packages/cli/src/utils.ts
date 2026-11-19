@@ -104,6 +104,7 @@ export async function writeStill(
   session: CaptureSession,
   file: string,
   time = prepared.resolved.duration,
+  chartRenderer?: 'svg' | 'canvas',
 ): Promise<{ file: string; bytes: number; width: number; height: number; time: number }> {
   const buffer = await session.captureStill(prepared.target, {
     time,
@@ -111,6 +112,7 @@ export async function writeStill(
     variant: prepared.resolved.variant,
     background: prepared.resolved.background,
     transparent: prepared.transparent,
+    chartRenderer,
   })
   await fs.mkdir(path.dirname(file), { recursive: true })
   await fs.writeFile(file, buffer)

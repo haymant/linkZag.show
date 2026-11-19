@@ -139,6 +139,7 @@ export default function App() {
     <div className="lz-app">
       <SceneStage
         scene={scene}
+        chartRenderer={parsed.chartRenderer ?? 'svg'}
         time={time}
         onReady={() => setReady(true)}
         onError={(error) => {

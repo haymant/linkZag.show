@@ -4,6 +4,7 @@ import type { BackgroundSpec, RenderOverrides, SceneVariant, ThemeName } from '.
 export interface ParsedRenderQuery {
   scene?: string
   time?: number
+  chartRenderer?: 'svg' | 'canvas'
   overrides: RenderOverrides
   warnings: string[]
 }
@@ -21,6 +22,13 @@ export function parseRenderQuery(search: string): ParsedRenderQuery {
   const overrides: RenderOverrides = {}
 
   const scene = params.get('scene')?.trim() || undefined
+
+  const chartRenderer = params.get('chartRenderer')
+  let parsedChartRenderer: 'svg' | 'canvas' | undefined
+  if (chartRenderer) {
+    if (chartRenderer === 'svg' || chartRenderer === 'canvas') parsedChartRenderer = chartRenderer
+    else warnings.push(`Unknown chart renderer "${chartRenderer}" (expected svg or canvas)`)
+  }
 
   const theme = params.get('theme')
   if (theme) {
@@ -63,7 +71,7 @@ export function parseRenderQuery(search: string): ParsedRenderQuery {
   const time = parsePositiveNumber(params.get('t'))
   if (params.has('t') && time === undefined) warnings.push('Invalid t; expected a non-negative number')
 
-  return { scene, time, overrides, warnings }
+  return { scene, time, chartRenderer: parsedChartRenderer, overrides, warnings }
 }
 
 export type { BackgroundSpec }
