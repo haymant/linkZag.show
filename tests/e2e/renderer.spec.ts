@@ -4,6 +4,7 @@ import { expect, test } from '@playwright/test'
 
 const scene = 'content/scenes/demo/02-evidence.yaml'
 const probeFile = path.join(process.cwd(), 'content', 'scenes', '.watch-probe.yaml')
+const quoteProbeFile = path.join(process.cwd(), 'content', 'scenes', '.quote-readiness-probe.yaml')
 
 test.describe('renderer URL API', () => {
   test('renders a scene at a requested time with overrides', async ({ page }) => {
@@ -69,6 +70,32 @@ test.describe('renderer URL API', () => {
     await page.goto('/?scene=content%2Fscenes%2Fmissing.yaml')
     await expect(page.locator('.lz-fatal')).toBeVisible()
     await expect(page.locator('.lz-fatal__message')).toContainText('Scene not found')
+  })
+
+  test('marks a quote without an avatar ready for capture', async ({ page }) => {
+    await fs.writeFile(
+      quoteProbeFile,
+      [
+        'id: quote-readiness-probe',
+        'duration: 4',
+        'width: 1280',
+        'height: 720',
+        'items:',
+        '  - type: quote',
+        '    x: 100',
+        '    y: 200',
+        '    width: 1080',
+        '    height: 300',
+        '    text: A quote without a portrait should still become ready.',
+      ].join('\n'),
+    )
+    try {
+      await page.goto(`/?scene=${encodeURIComponent('content/scenes/.quote-readiness-probe.yaml')}`)
+      await expect(page.locator('.lz-scene')).toHaveAttribute('data-linkzag-ready', 'true')
+      await expect(page.locator('.lz-quote__text')).toContainText('without a portrait')
+    } finally {
+      await fs.rm(quoteProbeFile, { force: true })
+    }
   })
 
   test('reloads the renderer when a content file changes', async ({ page }) => {

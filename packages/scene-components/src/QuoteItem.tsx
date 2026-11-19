@@ -20,7 +20,7 @@ export function QuoteItem({ item, theme, width, height, onReady, onError }: Prop
   errorRef.current = onError
 
   useEffect(() => {
-    if (!item.avatar || !avatarReady) return
+    if (item.avatar && !avatarReady) return
     readyRef.current()
   }, [avatarReady, item.avatar])
 
